@@ -1,13 +1,13 @@
 package sprites
 
 import (
-	"errors"
 	"fmt"
 	"image"
 	"image/color"
 	"io"
 
 	fcolor "github.com/fatih/color"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -91,17 +91,19 @@ func Read(r io.ReadSeeker) ([]Sprite, error) {
 		return nil, errors.New("CHR RAM is used")
 	}
 
-	sprs := []Sprite{}
 	// Seek to the first CHR ROM bank.
 	r.Seek(headerSize+int64(pc)*prgBankSize, io.SeekStart)
+	sprs := []Sprite{}
 	for i := 0; i < cc; i++ {
 		for j := 0; j < chrBankSize/spriteSize; j++ {
 			s := make(Sprite, spriteSize)
 			if _, err := r.Read(s); err != nil {
-				break
+				if err == io.EOF {
+					break
+				}
+				return nil, errors.Wrapf(err, "could not read sprite %d", j)
 			}
 			sprs = append(sprs, s)
-			r.Seek(headerSize, io.SeekCurrent)
 		}
 	}
 	return sprs, nil
