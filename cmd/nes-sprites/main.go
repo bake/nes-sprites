@@ -3,7 +3,7 @@ package main
 import (
 	"image"
 	"image/draw"
-	"image/gif"
+	"image/png"
 	"log"
 	"os"
 
@@ -37,10 +37,10 @@ func main() {
 		draw.Draw(im, r, s.Image(), image.Point{}, draw.Src)
 	}
 
-	f, err = os.Create("sprites.gif")
+	f, err = os.Create("sprites.png")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	gif.Encode(f, im, nil)
+	png.Encode(f, im)
 }
