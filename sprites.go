@@ -21,15 +21,15 @@ const (
 // A Sprite is represented by 16 bytes.
 type Sprite []byte
 
-// Colors returns the colors from 0 to 3.
+// Colors returns the colors from 0 to 3 in an byte array.
 func (s Sprite) Colors() []byte {
 	cs := []byte{}
 	for i := 0; i < 8; i++ {
 		c1 := s[i]
 		c2 := s[i+8]
-		// Use an unsigned integer and check for < 8 instead of using an integer
+		// Use an unsigned integer and check for <= 7 instead of using an integer
 		// and casting it on every iteration.
-		for j := uint(7); j < 8; j-- {
+		for j := uint(7); j <= 7; j-- {
 			v := (c1 >> j & 1) + (c2>>j)&1<<1
 			cs = append(cs, v)
 		}
@@ -92,7 +92,7 @@ func Read(r io.ReadSeeker) ([]Sprite, error) {
 	}
 
 	sprs := []Sprite{}
-	// Seek to the first CHR ROM bank
+	// Seek to the first CHR ROM bank.
 	r.Seek(headerSize+int64(pc)*prgBankSize, io.SeekStart)
 	for i := 0; i < cc; i++ {
 		for j := 0; j < chrBankSize/spriteSize; j++ {
@@ -100,7 +100,6 @@ func Read(r io.ReadSeeker) ([]Sprite, error) {
 			if _, err := r.Read(s); err != nil {
 				break
 			}
-			// c <- s
 			sprs = append(sprs, s)
 			r.Seek(headerSize, io.SeekCurrent)
 		}
