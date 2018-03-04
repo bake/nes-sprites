@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"git.192k.pw/bake/nes-sprites"
+	"github.com/BakeRolls/nes-sprites"
 )
 
 func main() {
