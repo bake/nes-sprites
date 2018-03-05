@@ -1,16 +1,16 @@
 package sprites
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"io"
 
-	fcolor "github.com/fatih/color"
 	"github.com/pkg/errors"
 )
 
 const (
+	spriteWidth = 8
+
 	headerSize     = 16
 	spriteSize     = 16
 	prgBankSize    = 16 * 1024
@@ -22,41 +22,23 @@ const (
 type Sprite []byte
 
 // Colors returns the colors from 0 to 3 in an byte array.
+// Each row is defined by summing the nth and the n+8th byte.
+// n:   11110000b
+// n+8: 11001100b
+//      33112200d
 func (s Sprite) Colors() []byte {
-	cs := []byte{}
-	for i := 0; i < 8; i++ {
+	cs := make([]byte, spriteWidth*spriteWidth)
+	for i := uint(0); i < spriteWidth; i++ {
 		c1 := s[i]
-		c2 := s[i+8]
-		// Use an unsigned integer and check for <= 7 instead of using an integer
-		// and casting it on every iteration.
-		for j := uint(7); j <= 7; j-- {
+		c2 := s[i+spriteWidth]
+		for j := uint(0); j < spriteWidth; j++ {
 			v := (c1 >> j & 1) + (c2>>j)&1<<1
-			cs = append(cs, v)
+			x := spriteWidth - j - 1
+			y := i * spriteWidth
+			cs[x+y] = v
 		}
 	}
 	return cs
-}
-
-var colorFuncs = []func(a ...interface{}){
-	fcolor.New(fcolor.BgBlack).PrintFunc(),
-	fcolor.New(fcolor.BgRed).PrintFunc(),
-	fcolor.New(fcolor.BgGreen).PrintFunc(),
-	fcolor.New(fcolor.BgBlue).PrintFunc(),
-}
-
-// Print the sprite to the terminal.
-// Each row is defined by summing the nth and the n+8th byte.
-// n:   11110000
-// n+8: 11001100
-//      33112200
-func (s Sprite) Print() {
-	for i, c := range s.Colors() {
-		if i > 0 && i%8 == 0 {
-			fmt.Println()
-		}
-		colorFuncs[c](c)
-	}
-	fmt.Println()
 }
 
 var colors = []color.Color{
