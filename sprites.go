@@ -65,7 +65,7 @@ func Read(r io.ReadSeeker) ([]Sprite, error) {
 	}
 
 	if h[0] != 0x4e || h[1] != 0x45 || h[2] != 0x53 || h[3] != 0x1a {
-		return nil, errors.New("first 4 bites are expected to be NES\\0x01a")
+		return nil, errors.New("first 4 bytes are expected to be NES\\0x01a")
 	}
 	pc := int(h[4])
 	cc := int(h[5])
