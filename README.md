@@ -5,8 +5,9 @@ Extract sprites from iNES ROM files. Sprites are represented by 16 bytes which a
 An example implementation can be found in [/cmd/nes-sprites/main.go](/cmd/nes-sprites/main.go). The following sprites are extracted from Super Mario Bros.
 
 ```bash
-$ go install github.com/BakeRolls/nes-sprites/...
+$ go install github.com/bake/nes-sprites/...
 $ nes-sprites mariobros1.nes
+$
 ```
 
 ![Sprites](/sprites.png)
